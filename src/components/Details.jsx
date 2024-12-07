@@ -1,89 +1,103 @@
 import { useEffect, useState } from "react";
-import { Container } from "react-bootstrap";
+import { Col, Container, Row, Spinner } from "react-bootstrap";
 import { useParams } from "react-router-dom";
+import { GeoAltFill, SunriseFill, SunsetFill } from "react-bootstrap-icons";
 
 const Details = () => {
   const { lat, lon } = useParams();
-  const [weather, setWeather] = useState(null);
+  const [weatherObject, setWeatherObject] = useState(null);
 
-  const fetchWeather = async () => {
-    try {
-      if (lat && lon) {
-        const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=f1094e8bb7d5876d5ef93fa05dd8facc&units=metric`
-        );
-        if (response.ok) {
-          const response = await response.json();
-          setWeather(response);
-        } else {
-          throw new Error("errore");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const fetchWeather = () => {
+    fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=f1094e8bb7d5876d5ef93fa05dd8facc&units=metric`
+    )
+      .then((response) => response.json())
+      .then((weather) => {
+        console.log(weather);
 
-  const fetchOtherDays = async () => {
-    try {
-      if (lat && lon) {
-        const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=f1094e8bb7d5876d5ef93fa05dd8facc&units=metric`
-        );
-        if (response.ok) {
-          const response = await response.json();
-        } else {
-          throw new Error("errore");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
+        setWeatherObject(weather);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   useEffect(() => {
     fetchWeather();
-    fetchOtherDays();
-  }, []);
+  }, [lat, lon]);
 
   return (
     <>
-      <Container
-        fluid
-        className="d-flex justify-content-center align-items-center"
-      >
-        <div>
-          {weather && (
-            <div>
-              <div className="d-flex justify-content-center">
-                <div className="d-flex flex-column">
-                  <div className="d-block">
-                    <h1 className="d-inline-block">{weather.name}</h1>
-                  </div>
+      {weatherObject ? (
+        <Container id="weatherContainer" className="my-5 text-center ">
+          <Row className="bg-transparent ">
+            <Col className="bg-transparent ">
+              <h1 className="mt-4">
+                {weatherObject.name} <GeoAltFill className="pb-2" />
+              </h1>
+              <h4 className="align-items-center mt-4">
+                Temperature: {weatherObject.main.temp}°C
+              </h4>
+              <Row>
+                <Col className="fs-4 lh-1 text-end mt-3">
+                  <p>
+                    <strong> Min: </strong>
+                    {weatherObject.main.temp_min} C° -
+                  </p>
+                  <h1 className="mt-5 me-5 pt-3">
+                    {weatherObject.weather[0].main}
+                  </h1>
+                </Col>
+                <Col className="fs-4 lh-1 text-start mt-3">
+                  <p>
+                    <strong> Max:</strong> {weatherObject.main.temp_max}C°
+                  </p>
+                  <img
+                    className="ms-3"
+                    src={`https://openweathermap.org/img/wn/${weatherObject.weather[0].icon}@2x.png`}
+                    alt=""
+                    width={160}
+                  />
+                </Col>
+              </Row>
+              <p id="weather-states" className="mb-3 ">
+                Feels like: {weatherObject.main.feels_like}°C
+              </p>
+              <p id="weather-states" className="mb-3 ">
+                Humidity: {weatherObject.main.humidity}%
+              </p>
+              <p id="weather-states" className="mb-3 ">
+                Wind Speed: {weatherObject.wind.speed} m/s
+              </p>
+              <p id="weather-states" className="mb-3 ">
+                Cloud cover: {weatherObject.clouds.all} %
+              </p>
+              <Row className="mt-4">
+                <Col>
+                  <p className="mb-3 ">
+                    <strong>Sunrise:</strong>
+                    {new Date(
+                      weatherObject.sys.sunrise * 1000
+                    ).toLocaleTimeString()}
+                  </p>
+                  <SunriseFill className="cloud" />
+                </Col>
+                <Col>
+                  <p className="mb-3">
+                    <strong> Sunset:</strong>
+                    {new Date(
+                      weatherObject.sys.sunset * 1000
+                    ).toLocaleTimeString()}
+                  </p>
 
-                  <div>
-                    <p>{Math.floor(weather.main.temp) + "°"}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="d-flex justify-content-around">
-                <div>
-                  <p>
-                    <strong>min: </strong>
-                    {Math.floor(weather.main.temp_min) + "°"}
-                  </p>
-                </div>
-                <p>Percepita: {weather.main.feels_like}</p>
-                <div>
-                  <p>
-                    <strong>max: </strong>
-                    {Math.floor(weather.main.temp_max) + "°"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </Container>
+                  <SunsetFill className="cloud" />
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Container>
+      ) : (
+        <Spinner animation="grow" />
+      )}
     </>
   );
 };

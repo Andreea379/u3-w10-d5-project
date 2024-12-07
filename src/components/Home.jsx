@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row, Navbar } from "react-bootstrap";
+
+import { CloudyFill } from "react-bootstrap-icons";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
 
@@ -29,9 +31,17 @@ const Home = () => {
   };
 
   return (
-    <Container className="text-center mt-5">
-      <h1>METEO</h1>
-      <p>Inserisci una città</p>
+    <Container id="weatherContainer" className="text-center mt-5">
+      <Navbar className="bg-transparent">
+        <Container fluid className="justify-content-center">
+          <Navbar.Brand href="#" className="align-items-center">
+            <CloudyFill className="cloud mx-3 pb-2" />
+            <p className="pt-3 d-inline-block fs-2">Meteo</p>
+          </Navbar.Brand>
+        </Container>
+      </Navbar>
+      <h1 className="mt-5">WELCOME!</h1>
+      <p className="mt-5">Inserisci una città🌆:</p>
       <Row className="justify-content-center mt-4">
         <Col xs={12} sm={8} md={6}>
           <Form onSubmit={handleChange}>
@@ -43,7 +53,12 @@ const Home = () => {
                 onChange={(e) => setCities(e.target.value)}
               />
             </Form.Group>
-            <Button variant="primary" className="my-3" type="submit">
+            <Button
+              id="submit"
+              variant="primary"
+              className="mt-5"
+              type="submit"
+            >
               Cerca
             </Button>
           </Form>

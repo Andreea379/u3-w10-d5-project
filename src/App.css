@@ -1,0 +1,20 @@
+#weatherContainer {
+  height: 40rem;
+  width: 30rem;
+  background-color: rgb(217, 217, 247);
+}
+.cloud {
+  font-size: 75px;
+  color: rgb(130, 122, 239);
+}
+#submit {
+  background-color: rgb(82, 77, 154);
+  border: none;
+  width: 6rem;
+}
+#weather-states {
+  width: 12rem;
+  box-shadow: 0 0 10px rgb(168, 163, 243);
+  margin-left: 8rem;
+  border-radius: 4px;
+}
